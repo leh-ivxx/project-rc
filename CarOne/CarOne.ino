@@ -67,7 +67,7 @@ void exeCmd() { // executes the command from cmd
       digitalWrite(motor2Pin1, LOW);
       digitalWrite(motor2Pin2, LOW);   
     } else { 
-      dutyCycle = constrain(value, 0, 255);
+      dutyCycle = constrain(value, 100, 255);
       ledcWrite(enable1Pin, dutyCycle);
       ledcWrite(enable2Pin, dutyCycle);
       Serial.println("Motor speed set to " + String(value));
@@ -138,11 +138,16 @@ void setup() {
 
   //for(int i=0; i<chCount; i++) {
     // attach channels to pins
-    servoCh.attach(chPin, usMin, usMax);
+    servoCh1.attach(chPin1, usMin, usMax);
+      servoCh2.attach(chPin2, usMin, usMax);
+    servoCh3.attach(chPin3, usMin, usMax);
+
     // initial value = middle
     chVal = (usMin + usMax)/2;
     // update
-    servoCh.writeMicroseconds( chVal );
+    servoCh1.writeMicroseconds( chVal );
+    servoCh2.writeMicroseconds( chVal );
+    servoCh3.writeMicroseconds( usMin );
   pinMode(motor1Pin1, OUTPUT);
   pinMode(motor1Pin2, OUTPUT);
     pinMode(18, OUTPUT);
@@ -162,13 +167,19 @@ void setup() {
 void loop() {
 
   // if contact lost for more than half second
-  if(millis() - lastCmdTime > 500) {  
+  if(millis() - lastCmdTime > 800) {  
      digitalWrite(motor1Pin1, LOW); 
   digitalWrite(motor1Pin2, LOW); 
   digitalWrite(motor2Pin1, LOW);
   digitalWrite(motor2Pin2, LOW);   
-      servoCh.writeMicroseconds( (usMin + usMax)/2 );
-      servoCh.detach(); // stop PWM signals
+      servoCh1.writeMicroseconds( (usMin + usMax)/2 );
+      servoCh1.detach(); // stop PWM signals
+
+       servoCh2.writeMicroseconds( (usMin + usMax)/2 );
+      servoCh2.detach(); // stop PWM signals
+
+    //   servoCh3.writeMicroseconds( (usMin + usMax)/2 );
+      servoCh3.detach(); // stop PWM signals
     }
   
 
