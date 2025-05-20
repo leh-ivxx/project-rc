@@ -2,13 +2,18 @@
 #include <ESP32Servo.h> 
 
 
-String device_name = "RcCar420";
+String device_name = "RcCar";
 
 
 BluetoothSerial SerialBT;
 
-Servo servoCh; // will generate 4 servo PWM signals
-int chPin =  2; // ESP pins: GPIO 0, 2, 14, 12
+Servo servoCh1; // will generate 4 servo PWM signals
+Servo servoCh2; // will generate 4 servo PWM signals
+Servo servoCh3; // will generate 4 servo PWM signals
+
+int chPin1 =  2; // ESP pins: GPIO 0, 2, 14, 12
+int chPin2 =  12; 
+int chPin3 =  13; 
 int chVal = 1500;
 int usMin = 700; // min pulse width
 int usMax = 2300; // max pulse width
@@ -62,7 +67,7 @@ void exeCmd() { // executes the command from cmd
       digitalWrite(motor2Pin1, LOW);
       digitalWrite(motor2Pin2, LOW);   
     } else { 
-      dutyCycle = map(value, 25, 100, 200, 255);
+      dutyCycle = constrain(value, 0, 255);
       ledcWrite(enable1Pin, dutyCycle);
       ledcWrite(enable2Pin, dutyCycle);
       Serial.println("Motor speed set to " + String(value));
@@ -79,56 +84,25 @@ if(cmd[0]=='g' && cmd[1]==' ' && cmd[2]=='1') {
 
   if( cmdStartsWith("ch") ) {
       chVal = (int)atof(cmd+3);
-      if(!servoCh.attached()) {
-        servoCh.attach(chPin, usMin, usMax);
+      if(!servoCh1.attached()) {
+        servoCh1.attach(chPin1, usMin, usMax);
       }   
-      servoCh.writeMicroseconds(chVal);
+          if(!servoCh2.attached()) {
+        servoCh2.attach(chPin2, usMin, usMax);
+      }
+      servoCh1.writeMicroseconds(chVal);
+      servoCh2.writeMicroseconds(chVal);
     }
-    if( cmdStartsWith("le") ) {
-      chVal = (int)atof(cmd+3);
-      if(!servoCh.attached()) {
-        servoCh.attach(chPin, usMin, usMax);
+    if( cmdStartsWith("ci") ) {
+     int chVal3 = (int)atof(cmd+3);
+      if(!servoCh3.attached()) {
+        servoCh3.attach(chPin3, usMin, usMax);
       }   
-      servoCh.writeMicroseconds(chVal);
+      servoCh3.writeMicroseconds(chVal3);
     }
   
   // invert channel:
   // example: set RoboRemo slider id to "ci0", set min -2000 and set max -1000
-  
-  if( cmdStartsWith("ci") ) {
-    
-      chVal = -(int)atof(cmd+4);
-      if(!servoCh.attached()) {
-        servoCh.attach(chPin, usMin, usMax);
-      }   
-      servoCh.writeMicroseconds(chVal);
-    }
-  
-  
-  // use accelerometer:
-  // example: set RoboRemo acc y id to "ca1"
-  
-  if( cmdStartsWith("ca") ) {
-      chVal = (usMax+usMin)/2 + (int)( atof(cmd+3)*51 ); // 9.8*51 = 500 => 1000 .. 2000
-      if(!servoCh.attached()) {
-        servoCh.attach(chPin, usMin, usMax);
-      }   
-      servoCh.writeMicroseconds(chVal);
-    }
-  
-  
-  // invert accelerometer:
-  // example: set RoboRemo acc y id to "cb1"
-  
-  if( cmdStartsWith("cb") ) {
-    
-      chVal = (usMax+usMin)/2 - (int)( atof(cmd+3)*51 ); // 9.8*51 = 500 => 1000 .. 2000
-      if(!servoCh.attached()) {
-        servoCh.attach(chPin, usMin, usMax);
-      }   
-      servoCh.writeMicroseconds(chVal);
-    }
-  
   
   
   
