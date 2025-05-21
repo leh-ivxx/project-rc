@@ -67,7 +67,7 @@ void exeCmd() { // executes the command from cmd
       digitalWrite(motor2Pin1, LOW);
       digitalWrite(motor2Pin2, LOW);   
     } else { 
-      dutyCycle = constrain(value, 100, 255);
+      dutyCycle = constrain(value, 0, 255);
       ledcWrite(enable1Pin, dutyCycle);
       ledcWrite(enable2Pin, dutyCycle);
       Serial.println("Motor speed set to " + String(value));
