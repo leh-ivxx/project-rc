@@ -49,6 +49,7 @@ const int res = 8;
 
 int dutyCycle = 0;
 int value=0;
+int angle1, angle2, angle3;
 
 boolean cmdStartsWith(const char *st) { // checks if cmd starts with st
   for(int i=0; ; i++) {
@@ -89,7 +90,9 @@ if( cmdStartsWith("g 1") ) {
    handleForward(dutyCycle);}
 
 if( cmdStartsWith("ch") ) {
-      chVal1 = (int)atof(cmd+3);
+      angle1 = (int)atof(cmd+3);
+      angle1= constrain(angle1,0,180);
+      chVal1= map(angle1,0,180,usMin,usMax);
       chVal2 = chVal1;
     /*  if(!servoCh1.attached()) {
         servoCh1.attach(chPin1, usMin, usMax);
@@ -99,13 +102,20 @@ if( cmdStartsWith("ch") ) {
       }*/
       servoCh1.writeMicroseconds(chVal1);
       servoCh2.writeMicroseconds(chVal2);
+    
+  debug((String)"Servo 1 & 2= "+angle1+"°");
+      
     }
     if( cmdStartsWith("ci") ) {
-     int chVal3 = (int)atof(cmd+3);
+      angle3 = (int)atof(cmd+3);
+      angle3= constrain(angle3,0,180);
+      chVal3= map(angle3,0,180,usMin,usMax);
       //if(!servoCh3.attached()) {
       //  servoCh3.attach(chPin3, usMin, usMax);
     //  }   
       servoCh3.writeMicroseconds(chVal3);
+      
+  debug((String)"Servo 3 = "+angle3+"°");
     }
   
   // invert channel:
